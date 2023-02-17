@@ -1,0 +1,19 @@
+{
+  "name": "token-erc20-hardhat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx hardhat test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.1",
+    "hardhat": "^2.12.7"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.8.1"
+  }
+}
