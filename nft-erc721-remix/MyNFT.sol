@@ -50,7 +50,15 @@ interface IERC721Metadata {
     function tokenURI(uint256 _tokenId) external view returns (string memory);
 }
 
-contract MyNFT is IERC721, IERC721Metadata {
+interface IERC721Enumerable {
+    function totalSupply() external view returns (uint256);
+
+    function tokenByIndex(uint256 _index) external view returns (uint256);
+
+    function tokenOfOwnerByIndex(address _owner, uint256 _index) external view returns (uint256);
+}
+
+contract MyNFT is IERC721, IERC721Metadata, IERC721Enumerable {
     event Transfer(address indexed from, address indexed to, uint indexed id);
     event Approval(
         address indexed owner,
@@ -77,7 +85,8 @@ contract MyNFT is IERC721, IERC721Metadata {
         return
             interfaceId == type(IERC721).interfaceId ||
             interfaceId == type(IERC165).interfaceId ||
-            interfaceId == type(IERC721Metadata).interfaceId;
+            interfaceId == type(IERC721Metadata).interfaceId ||
+            interfaceId == type(IERC721Enumerable).interfaceId;
     }
 
     function ownerOf(uint id) external view returns (address owner) {
@@ -188,19 +197,39 @@ contract MyNFT is IERC721, IERC721Metadata {
             ".json"
         );
 
+        _allTokens.push(_lastId);
+        _allTokensIndex[_lastId] = _allTokens.length - 1;
+        _ownedTokens[msg.sender][_balanceOf[msg.sender] - 1] = _lastId;
+        _ownedTokensIndex[_lastId] = _balanceOf[msg.sender] - 1;
+        
         emit Transfer(address(0), msg.sender, _lastId);
     }
 
     function burn(uint tokenId) public {
         address lastOwner = _ownerOf[tokenId];
         require(lastOwner != address(0), "Not minted");
-        require(lastOwner == msg.sender, "Not permitted");
+        require(
+            _isApprovedOrOwner(lastOwner, msg.sender, tokenId),
+            "Not permitted"
+        );
 
         _balanceOf[lastOwner]--;
         _ownerOf[tokenId] = address(0);
+        delete _uris[tokenId];
+        
+        //descobre qual index global deve ser removido
+        uint removedIndex = _allTokensIndex[tokenId];
+        //copia o último elemento pra posição excluída
+        _allTokens[removedIndex]  = _allTokens[_allTokens.length - 1];
+        //remove a cópia do final do array, simulando movimentação
+        _allTokens.pop();
 
-        if (bytes(_uris[tokenId]).length != 0)
-            delete _uris[tokenId];
+        //descobre qual owner index deve ser removido
+        uint removedOwnerIndex = _ownedTokensIndex[tokenId];
+        //copia o último elemento pra posição excluída
+        _ownedTokens[msg.sender][removedOwnerIndex]  = _ownedTokens[msg.sender][_balanceOf[msg.sender] - 1];
+        //remove a cópia do final do array, simulando movimentação
+        delete _ownedTokensIndex[tokenId];
     }
 
     function name() external view returns (string memory) {
@@ -216,5 +245,27 @@ contract MyNFT is IERC721, IERC721Metadata {
     function tokenURI(uint256 _tokenId) external view returns (string memory) {
         require(_ownerOf[_tokenId] != address(0), "Not minted");
         return _uris[_tokenId];
+    }
+
+    mapping(address => mapping(uint256 => uint256)) private _ownedTokens;//owner => (owner index => tokenId)
+
+    mapping(uint256 => uint256) private _ownedTokensIndex;//tokenId => owner index
+
+    uint256[] private _allTokens;
+
+    mapping(uint256 => uint256) private _allTokensIndex;//tokenId => global idnex
+
+    function totalSupply() external view returns (uint256) {
+        return _allTokens.length;
+    }
+
+    function tokenByIndex(uint256 _index) external view returns (uint256){
+        require(_index < _allTokens.length, "Global index out of bounds");
+        return _allTokens[_index];
+    }
+
+    function tokenOfOwnerByIndex(address _owner, uint256 _index) external view returns (uint256){
+        require(_index < _balanceOf[_owner], "Owner index out of bounds");
+        return _ownedTokens[_owner][_index];
     }
 }
