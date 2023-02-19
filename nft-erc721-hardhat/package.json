@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run compile && npm run coverage",
+    "coverage": "npx hardhat coverage",
+    "compile": "npx hardhat compile",
+    "deploy": "npx hardhat run scripts/deploy.ts --network bsctest"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +17,8 @@
     "hardhat": "^2.12.7"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.8.1"
+    "@nomiclabs/hardhat-etherscan": "^3.1.6",
+    "@openzeppelin/contracts": "^4.8.1",
+    "dotenv": "^16.0.3"
   }
 }

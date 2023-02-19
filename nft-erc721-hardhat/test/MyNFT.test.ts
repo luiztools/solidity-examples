@@ -124,6 +124,13 @@ describe("MyNFT", () => {
     expect(uri).to.equal("https://www.luiztools.com.br/nft/1.json", "Wrong token URI");
   });
 
+  it("Should NOT has URI metadata", async () => {
+    const { myNFT, owner, otherAccount } = await loadFixture(deployFixture);
+
+    await expect(myNFT.tokenURI(1))
+      .to.be.revertedWith("ERC721: invalid token ID");
+  });
+
   it("Should transfer from", async () => {
     const { myNFT, owner, otherAccount } = await loadFixture(deployFixture);
 
@@ -232,13 +239,6 @@ describe("MyNFT", () => {
     await expect(myNFT.setApprovalForAll(otherAccount.address, true))
       .to.emit(myNFT, 'ApprovalForAll')
       .withArgs(owner.address, otherAccount.address, true);
-  });
-
-  it("Should NOT has URI metadata", async () => {
-    const { myNFT, owner, otherAccount } = await loadFixture(deployFixture);
-
-    await expect(myNFT.tokenURI(1))
-      .to.be.revertedWith("ERC721: invalid token ID");
   });
 
   it("Should NOT transfer from", async () => {
