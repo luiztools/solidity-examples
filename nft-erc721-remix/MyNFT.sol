@@ -1,25 +1,31 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-interface IERC165 {
+interface ERC165 {
     function supportsInterface(bytes4 interfaceID) external view returns (bool);
 }
 
-interface IERC721 is IERC165 {
+interface ERC721 {
+    event Transfer(address indexed _from, address indexed _to, uint256 indexed _tokenId);
+
+    event Approval(address indexed _owner, address indexed _approved, uint256 indexed _tokenId);
+
+    event ApprovalForAll(address indexed _owner, address indexed _operator, bool _approved);
+
     function balanceOf(address owner) external view returns (uint balance);
 
     function ownerOf(uint tokenId) external view returns (address owner);
 
-    function safeTransferFrom(address from, address to, uint tokenId) external;
+    function safeTransferFrom(address from, address to, uint tokenId) external payable;
 
     function safeTransferFrom(
         address from,
         address to,
         uint tokenId,
         bytes calldata data
-    ) external;
+    ) external payable;
 
-    function transferFrom(address from, address to, uint tokenId) external;
+    function transferFrom(address from, address to, uint tokenId) external payable;
 
     function approve(address to, uint tokenId) external;
 
@@ -33,7 +39,7 @@ interface IERC721 is IERC165 {
     ) external view returns (bool);
 }
 
-interface IERC721Receiver {
+interface ERC721Receiver {
     function onERC721Received(
         address operator,
         address from,
@@ -42,7 +48,7 @@ interface IERC721Receiver {
     ) external returns (bytes4);
 }
 
-interface IERC721Metadata {
+interface ERC721Metadata {
     function name() external view returns (string memory);
 
     function symbol() external view returns (string memory);
@@ -50,7 +56,7 @@ interface IERC721Metadata {
     function tokenURI(uint256 _tokenId) external view returns (string memory);
 }
 
-interface IERC721Enumerable {
+interface ERC721Enumerable {
     function totalSupply() external view returns (uint256);
 
     function tokenByIndex(uint256 _index) external view returns (uint256);
@@ -58,18 +64,7 @@ interface IERC721Enumerable {
     function tokenOfOwnerByIndex(address _owner, uint256 _index) external view returns (uint256);
 }
 
-contract MyNFT is IERC721, IERC721Metadata, IERC721Enumerable {
-    event Transfer(address indexed from, address indexed to, uint indexed id);
-    event Approval(
-        address indexed owner,
-        address indexed spender,
-        uint indexed id
-    );
-    event ApprovalForAll(
-        address indexed owner,
-        address indexed operator,
-        bool approved
-    );
+contract MyNFT is ERC721, ERC165, ERC721Metadata, ERC721Enumerable {
 
     mapping(uint => address) internal _ownerOf; //tokenId => owner
 
@@ -83,10 +78,10 @@ contract MyNFT is IERC721, IERC721Metadata, IERC721Enumerable {
         bytes4 interfaceId
     ) external pure returns (bool) {
         return
-            interfaceId == type(IERC721).interfaceId ||
-            interfaceId == type(IERC165).interfaceId ||
-            interfaceId == type(IERC721Metadata).interfaceId ||
-            interfaceId == type(IERC721Enumerable).interfaceId;
+            interfaceId == type(ERC721).interfaceId ||
+            interfaceId == type(ERC165).interfaceId ||
+            interfaceId == type(ERC721Metadata).interfaceId ||
+            interfaceId == type(ERC721Enumerable).interfaceId;
     }
 
     function ownerOf(uint id) external view returns (address owner) {
@@ -131,7 +126,7 @@ contract MyNFT is IERC721, IERC721Metadata, IERC721Enumerable {
             spender == _approvals[id]);
     }
 
-    function transferFrom(address from, address to, uint id) public {
+    function _transferFrom(address from, address to, uint id) internal {
         require(from == _ownerOf[id], "from != owner");
         require(to != address(0), "transfer to zero address");
 
@@ -147,18 +142,22 @@ contract MyNFT is IERC721, IERC721Metadata, IERC721Enumerable {
         emit Approval(from, address(0), id);
     }
 
-    function safeTransferFrom(address from, address to, uint id) external {
-        transferFrom(from, to, id);
+    function transferFrom(address from, address to, uint id) external payable {
+        _transferFrom(from, to, id);
+    }
+
+    function safeTransferFrom(address from, address to, uint id) external payable {
+        _transferFrom(from, to, id);
 
         require(
             to.code.length == 0 ||
-                IERC721Receiver(to).onERC721Received(
+                ERC721Receiver(to).onERC721Received(
                     msg.sender,
                     from,
                     id,
                     ""
                 ) ==
-                IERC721Receiver.onERC721Received.selector,
+                ERC721Receiver.onERC721Received.selector,
             "unsafe recipient"
         );
     }
@@ -168,18 +167,18 @@ contract MyNFT is IERC721, IERC721Metadata, IERC721Enumerable {
         address to,
         uint id,
         bytes calldata data
-    ) external {
-        transferFrom(from, to, id);
+    ) external payable {
+        _transferFrom(from, to, id);
 
         require(
             to.code.length == 0 ||
-                IERC721Receiver(to).onERC721Received(
+                ERC721Receiver(to).onERC721Received(
                     msg.sender,
                     from,
                     id,
                     data
                 ) ==
-                IERC721Receiver.onERC721Received.selector,
+                ERC721Receiver.onERC721Received.selector,
             "unsafe recipient"
         );
     }
@@ -232,11 +231,11 @@ contract MyNFT is IERC721, IERC721Metadata, IERC721Enumerable {
         delete _ownedTokensIndex[tokenId];
     }
 
-    function name() external view returns (string memory) {
+    function name() external pure returns (string memory) {
         return "MyNFT Collection";
     }
 
-    function symbol() external view returns (string memory) {
+    function symbol() external pure returns (string memory) {
         return "MFC";
     }
 
