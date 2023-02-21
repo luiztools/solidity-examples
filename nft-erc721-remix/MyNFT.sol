@@ -217,6 +217,7 @@ contract MyNFT is ERC721, ERC165, ERC721Metadata, ERC721Enumerable {
         _balanceOf[lastOwner]--;
         _ownerOf[tokenId] = address(0);
         delete _uris[tokenId];
+        delete _approvals[tokenId];
         
         //descobre qual index global deve ser removido
         uint removedIndex = _allTokensIndex[tokenId];
@@ -224,13 +225,20 @@ contract MyNFT is ERC721, ERC165, ERC721Metadata, ERC721Enumerable {
         _allTokens[removedIndex]  = _allTokens[_allTokens.length - 1];
         //remove a cópia do final do array, simulando movimentação
         _allTokens.pop();
+        //remove do índice de tokens
+        delete _allTokensIndex[tokenId];
 
         //descobre qual owner index deve ser removido
         uint removedOwnerIndex = _ownedTokensIndex[tokenId];
-        //copia o último elemento pra posição excluída
-        _ownedTokens[msg.sender][removedOwnerIndex]  = _ownedTokens[msg.sender][_balanceOf[msg.sender] - 1];
-        //remove a cópia do final do array, simulando movimentação
+        //sobrescreve o mapping de tokens do owner com cópia do último (balance porque já foi decrementado)
+        _ownedTokens[msg.sender][removedOwnerIndex] = _ownedTokens[msg.sender][_balanceOf[msg.sender]];
+        //exclui o último que está duplicado (balance porque já foi decrementado)
+        delete _ownedTokens[msg.sender][_balanceOf[msg.sender]];
+        //exclui do índice de tokens por owner
         delete _ownedTokensIndex[tokenId];
+
+        emit Transfer(lastOwner, address(0), tokenId);
+        emit Approval(lastOwner, address(0), tokenId);
     }
 
     function name() external pure returns (string memory) {
