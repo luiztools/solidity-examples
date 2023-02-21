@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/Strings.sol";
+
 interface ERC165 {
     function supportsInterface(bytes4 interfaceID) external view returns (bool);
 }
@@ -192,7 +194,7 @@ contract MyNFT is ERC721, ERC165, ERC721Metadata, ERC721Enumerable {
 
         _uris[_lastId] = string.concat(
             "https://www.luiztools.com.br/nfts/",
-            string(abi.encode(_lastId)),
+            Strings.toString(_lastId),
             ".json"
         );
 
