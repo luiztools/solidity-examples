@@ -80,10 +80,10 @@ contract MyNFT is ERC721, ERC165, ERC721Metadata, ERC721Enumerable {
         bytes4 interfaceId
     ) external pure returns (bool) {
         return
-            interfaceId == type(ERC721).interfaceId ||
-            interfaceId == type(ERC165).interfaceId ||
-            interfaceId == type(ERC721Metadata).interfaceId ||
-            interfaceId == type(ERC721Enumerable).interfaceId;
+            interfaceId == 0x80ac58cd || //ERC721
+            interfaceId == 0x01ffc9a7 || //ERC165
+            interfaceId == 0x5b5e139f || //ERC721Metadata
+            interfaceId == 0x780e9d63;//ERC721Enumerable
     }
 
     function ownerOf(uint id) external view returns (address owner) {

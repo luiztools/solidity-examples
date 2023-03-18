@@ -17,23 +17,26 @@ A first Solidity project (HardHat).
 ## Hello Solidity Truffle
 A first Solidity project (Truffle).
 
+## Multitoken ERC-1155 Remix
+An ERC-1155 multitoken contract built with Remix and Solidity.
+
 ## NFT ERC-721 HardHat
-New ERC-721 NFT contract built with HardHat, Solidity and OpenZepellin.
+An ERC-721 NFT contract built with HardHat, Solidity and OpenZepellin.
 
 ## NFT ERC-721 Remix
-New ERC-721 NFT contract built with Remix and Solidity.
+An ERC-721 NFT contract built with Remix and Solidity.
 
 ## NFT ERC-721 Truffle
-New ERC-721 NFT contract built with Truffle, Solidity and OpenZepellin.
+An ERC-721 NFT contract built with Truffle, Solidity and OpenZepellin.
 
 ## Ownable & AccessControl Patterns
 A simple ownable and access control patterns implementations for contracts with administrative functions.
 
 ## Token ERC-20 HardHat
-New ERC-20 Token built with HardHat, Solidity and OpenZepellin.
+An ERC-20 Token built with HardHat, Solidity and OpenZepellin.
 
 ## Token ERC-20 Remix
-New ERC-20 Token built with Remix and Solidity.
+An ERC-20 Token built with Remix and Solidity.
 
 ## Token ERC-20 Truffle
-New ERC-20 Token built with Truffle, Solidity and OpenZepellin.
+An ERC-20 Token built with Truffle, Solidity and OpenZepellin.
