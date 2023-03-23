@@ -20,6 +20,9 @@ A first Solidity project (Truffle).
 ## Multitoken ERC-1155 Remix
 An ERC-1155 multitoken contract built with Remix and Solidity.
 
+## Multitoken ERC-1155 HardHat
+An ERC-1155 multitoken contract built with HardHat, OpenZeppelin and Solidity.
+
 ## NFT ERC-721 HardHat
 An ERC-721 NFT contract built with HardHat, Solidity and OpenZepellin.
 
