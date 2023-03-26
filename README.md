@@ -35,6 +35,9 @@ An ERC-721 NFT contract built with Truffle, Solidity and OpenZepellin.
 ## Ownable & AccessControl Patterns
 A simple ownable and access control patterns implementations for contracts with administrative functions.
 
+## Proxy Pattern HardHat
+A simple proxy pattern implementation for upgradeable contracts with HardHat and OpenZeppelin.
+
 ## Token ERC-20 HardHat
 An ERC-20 Token built with HardHat, Solidity and OpenZepellin.
 

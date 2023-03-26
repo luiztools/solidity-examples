@@ -98,22 +98,6 @@ describe("MyTokens", () => {
       .to.be.revertedWith("ERC1155: caller is not token owner or approved");
   });
 
-  it("Should has URI metadata", async () => {
-    const { contract } = await loadFixture(deployFixture);
-
-    await contract.mint(0, { value: ethers.utils.parseEther("0.01") });
-
-    const uri = await contract.uri(0);
-    expect(uri).to.equal("https://www.luiztools.com.br/tokens/0.json", "Wrong token URI");
-  });
-
-  it("Should NOT has URI metadata", async () => {
-    const { contract, owner, otherAccount } = await loadFixture(deployFixture);
-
-    await expect(contract.uri(3))
-      .to.be.revertedWith("This token does not exists");
-  });
-
   it("Should transfer from", async () => {
     const { contract, owner, otherAccount } = await loadFixture(deployFixture);
 
@@ -192,8 +176,6 @@ describe("MyTokens", () => {
 
   it("Should emit approve event", async () => {
     const { contract, owner, otherAccount } = await loadFixture(deployFixture);
-
-    await contract.mint(0, { value: ethers.utils.parseEther("0.01") });
 
     await expect(contract.setApprovalForAll(otherAccount.address, true))
       .to.emit(contract, 'ApprovalForAll')
@@ -291,5 +273,21 @@ describe("MyTokens", () => {
     await instance.mint(0, { value: ethers.utils.parseEther("0.01") });
 
     await expect(instance.withdraw()).to.be.revertedWith("You do not have permission");
+  });
+
+  it("Should has URI metadata", async () => {
+    const { contract } = await loadFixture(deployFixture);
+
+    await contract.mint(0, { value: ethers.utils.parseEther("0.01") });
+
+    const uri = await contract.uri(0);
+    expect(uri).to.equal("https://www.luiztools.com.br/tokens/0.json", "Wrong token URI");
+  });
+
+  it("Should NOT has URI metadata", async () => {
+    const { contract, owner, otherAccount } = await loadFixture(deployFixture);
+
+    await expect(contract.uri(3))
+      .to.be.revertedWith("This token does not exists");
   });
 });
