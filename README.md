@@ -35,6 +35,9 @@ An ERC-721 NFT contract built with Truffle, Solidity and OpenZepellin.
 ## Ownable & AccessControl Patterns
 A simple ownable and access control patterns implementations for contracts with administrative functions.
 
+## Protocolo DeFi Remix
+A simple DeFi protocol written in Solidity based on ERC-20 spec and OpenZeppelin contracts.
+
 ## Proxy Pattern HardHat
 A simple proxy pattern implementation for upgradeable contracts with HardHat and OpenZeppelin.
 
