@@ -58,3 +58,6 @@ An ERC-20 Token built with Remix and Solidity.
 
 ## Token ERC-20 Truffle
 An ERC-20 Token built with Truffle, Solidity and OpenZepellin.
+
+## Wrapped Token
+Two simple Wrapped Token implementations in Solidity based on ERC-20 spec and OpenZeppelin contracts.
