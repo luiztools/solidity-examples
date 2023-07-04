@@ -38,6 +38,12 @@ A simple ownable and access control patterns implementations for contracts with 
 ## Protocolo DeFi Remix
 A simple DeFi protocol written in Solidity based on ERC-20 spec and OpenZeppelin contracts.
 
+## Protocolo Liquidity Mining Remix
+A simple Liquidity Mining protocol written in Solidity based on ERC-20 spec and OpenZeppelin contracts.
+
+## Protocolo Staking Remix
+A simple Liquidity Mining protocol written in Solidity based on ERC-20 spec and OpenZeppelin contracts.
+
 ## Proxy Pattern HardHat
 A simple proxy pattern implementation for upgradeable contracts with HardHat and OpenZeppelin.
 
