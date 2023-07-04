@@ -4,7 +4,7 @@ A simple Reentrancy Attack example with solutions.
 
 ## Referências
 
-Tutorial em: https://www.luiztools.com.br/post/
+Tutorial em: https://www.luiztools.com.br/post/reentrancy-attack-em-smart-contracts-solidity/
 
 Conheça meu curso de web3, blockchain e solidity: https://www.luiztools.com.br/curso-web23
 

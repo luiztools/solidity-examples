@@ -41,6 +41,9 @@ A simple DeFi protocol written in Solidity based on ERC-20 spec and OpenZeppelin
 ## Proxy Pattern HardHat
 A simple proxy pattern implementation for upgradeable contracts with HardHat and OpenZeppelin.
 
+## Reentrancy Attack Remix
+A simple Reentrancy Attack example with solutions.
+
 ## Token ERC-20 HardHat
 An ERC-20 Token built with HardHat, Solidity and OpenZepellin.
 
