@@ -50,6 +50,9 @@ A simple proxy pattern implementation for upgradeable contracts with HardHat and
 ## Reentrancy Attack Remix
 A simple Reentrancy Attack example with solutions.
 
+## Stablecoin Fiat Remix
+A simple stablecoin fiat implementation with Remix.
+
 ## Token ERC-20 HardHat
 An ERC-20 Token built with HardHat, Solidity and OpenZepellin.
 
