@@ -7,11 +7,11 @@
     "test": "npx hardhat test"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "LuizTools",
+  "license": "MIT",
   "devDependencies": {
-    "@nomicfoundation/hardhat-toolbox": "^2.0.1",
-    "hardhat": "^2.12.7"
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "hardhat": "^2.18.1"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.8.1"

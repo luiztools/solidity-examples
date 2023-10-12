@@ -4,11 +4,9 @@ import "@nomicfoundation/hardhat-toolbox";
 import dotenv from 'dotenv';
 dotenv.config();
 
-import "@nomiclabs/hardhat-etherscan";
-
 const config: HardhatUserConfig = {
   solidity: {
-    version: "0.8.17",
+    version: "0.8.20",
     settings: {
       optimizer: {
         enabled: true,

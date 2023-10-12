@@ -13,11 +13,10 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@nomicfoundation/hardhat-toolbox": "^2.0.1",
-    "hardhat": "^2.12.7"
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "hardhat": "^2.18.1"
   },
   "dependencies": {
-    "@nomiclabs/hardhat-etherscan": "^3.1.6",
     "@openzeppelin/contracts": "^4.8.1",
     "dotenv": "^16.0.3"
   }

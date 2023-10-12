@@ -4,10 +4,11 @@ async function main() {
   const MyTokens = await ethers.getContractFactory("MyTokens");
   const myTokens = await MyTokens.deploy();
 
-  await myTokens.deployed();
+  await myTokens.waitForDeployment();
+  const address = await myTokens.getAddress();
 
   console.log(
-    `Contract deployed to ${myTokens.address}`
+    `Contract deployed to ${address}`
   );
 }
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17;
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
@@ -52,7 +52,7 @@ contract MyNFT is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable {
 
     function supportsInterface(
         bytes4 interfaceId
-    ) public view override(ERC721, ERC721Enumerable) returns (bool) {
+    ) public view override(ERC721, ERC721Enumerable, ERC721URIStorage) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 }

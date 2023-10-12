@@ -3,9 +3,10 @@ import { ethers, upgrades } from "hardhat";
 async function main() {
   const Contrato = await ethers.getContractFactory("Contrato");
   const contract = await upgrades.deployProxy(Contrato);
-  await contract.deployed();
+  await contract.waitForDeployment();
+  const address = await contract.getAddress()
 
-  console.log(`Contract deployed at ${contract.address}`);
+  console.log(`Contract deployed at ${address}`);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

@@ -1,12 +1,11 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
-import "@nomiclabs/hardhat-etherscan";
 
 import dotenv from 'dotenv';
 dotenv.config();
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.18",
+  solidity: "0.8.20",
   networks: {
     mumbai: {
       url: process.env.RPC_URL,
