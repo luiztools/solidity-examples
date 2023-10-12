@@ -5,8 +5,9 @@ async function main() {
   const BookDatabase = await ethers.getContractFactory("BookDatabase");
   const bookDatabase = await BookDatabase.deploy();
 
-  await bookDatabase.deployed();
-  console.log(`Contract deployed to ${bookDatabase.address}`);
+  await bookDatabase.waitForDeployment();
+  const address = await bookDatabase.getAddress();
+  console.log(`Contract deployed to ${address}`);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

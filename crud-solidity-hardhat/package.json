@@ -7,14 +7,13 @@
     "test": "npx hardhat test"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "LuizTools",
+  "license": "MIT",
   "devDependencies": {
-    "@nomicfoundation/hardhat-toolbox": "^2.0.0",
-    "@nomiclabs/hardhat-etherscan": "^3.1.1",
-    "hardhat": "^2.12.0"
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "hardhat": "^2.18.1"
   },
   "dependencies": {
-    "dotenv": "^16.0.3"
+    "dotenv": "^16.3.1"
   }
 }
