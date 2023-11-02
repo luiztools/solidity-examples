@@ -5,6 +5,9 @@ Use the respective readmes to know more about the projects.
 ## Adapter Pattern
 A simple adapter pattern implementation for upgradeable contracts.
 
+## Blockchain Local HardHat
+A simple example of how to run a local/privat blockchain with HardHat.
+
 ## CRUD Solidity HardHat
 A CRUD example in Solidity (HardHat).
 

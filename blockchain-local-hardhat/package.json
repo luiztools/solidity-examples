@@ -1,0 +1,15 @@
+{
+  "name": "blockchain-local-hardhat",
+  "version": "1.0.0",
+  "description": "A simple example of how to run a local/privat blockchain with HardHat.",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx hardhat node --network hardhat"
+  },
+  "keywords": [],
+  "author": "LuizTools",
+  "license": "MIT",
+  "devDependencies": {
+    "hardhat": "^2.18.3"
+  }
+}
