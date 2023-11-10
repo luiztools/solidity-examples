@@ -4,7 +4,7 @@ import { ethers } from "hardhat";
 
 describe("LuizCoin", () => {
 
-  const DECIMALS = ethers.BigNumber.from(18);
+  const DECIMALS = 18n;
 
   async function deployFixture() {
     const [owner, otherAccount] = await ethers.getSigners();
@@ -16,7 +16,7 @@ describe("LuizCoin", () => {
   it("Should put total supply LuizCoin in the admin account", async () => {
     const { luizCoin, owner } = await loadFixture(deployFixture);
     const balance = await luizCoin.balanceOf(owner.address);
-    const totalSupply = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(DECIMALS));
+    const totalSupply = 1000n * 10n ** DECIMALS;
     expect(balance).to.equal(totalSupply, "Total supply wasn't in the first account");
   });
 
@@ -39,7 +39,7 @@ describe("LuizCoin", () => {
   });
 
   it("Should transfer", async () => {
-    const qty = ethers.BigNumber.from(1).mul(ethers.BigNumber.from(10).pow(DECIMALS));
+    const qty = 1n * 10n ** DECIMALS;
 
     const { luizCoin, owner, otherAccount } = await loadFixture(deployFixture);
     const balanceAdminBefore = await luizCoin.balanceOf(owner.address);
@@ -50,20 +50,20 @@ describe("LuizCoin", () => {
     const balanceAdminNow = await luizCoin.balanceOf(owner.address);
     const balanceToNow = await luizCoin.balanceOf(otherAccount.address);
 
-    expect(balanceAdminNow).to.equal(balanceAdminBefore.sub(qty), "The admin balance is wrong");
-    expect(balanceToNow).to.equal(balanceToBefore.add(qty), "The to balance is wrong");
+    expect(balanceAdminNow).to.equal(balanceAdminBefore - qty, "The admin balance is wrong");
+    expect(balanceToNow).to.equal(balanceToBefore + qty, "The to balance is wrong");
   });
 
   it("Should NOT transfer", async () => {
-    const aboveSupply = ethers.BigNumber.from(1001).mul(ethers.BigNumber.from(10).pow(DECIMALS));
+    const aboveSupply = 1001n * 10n ** DECIMALS;
     const { luizCoin, owner, otherAccount } = await loadFixture(deployFixture);
 
     await expect(luizCoin.transfer(otherAccount.address, aboveSupply))
-      .to.be.revertedWith("ERC20: transfer amount exceeds balance");
+      .to.be.revertedWithCustomError(luizCoin, "ERC20InsufficientBalance");
   });
 
   it("Should approve", async () => {
-    const qty = ethers.BigNumber.from(1).mul(ethers.BigNumber.from(10).pow(DECIMALS));
+    const qty = 1n * 10n ** DECIMALS;
 
     const { luizCoin, owner, otherAccount } = await loadFixture(deployFixture);
     await luizCoin.approve(otherAccount.address, qty);
@@ -73,7 +73,7 @@ describe("LuizCoin", () => {
   });
 
   it("Should transfer from", async () => {
-    const qty = ethers.BigNumber.from(1).mul(ethers.BigNumber.from(10).pow(DECIMALS));
+    const qty = 1n * 10n ** DECIMALS;
 
     const { luizCoin, owner, otherAccount } = await loadFixture(deployFixture);
     const allowanceBefore = await luizCoin.allowance(owner.address, otherAccount.address);
@@ -90,15 +90,15 @@ describe("LuizCoin", () => {
     const balanceToNow = await luizCoin.balanceOf(otherAccount.address);
 
     expect(allowanceBefore).to.equal(allowanceNow, "The allowance is wrong");
-    expect(balanceAdminNow).to.equal(balanceAdminBefore.sub(qty), "The admin balance is wrong");
-    expect(balanceToNow).to.equal(balanceToBefore.add(qty), "The to balance is wrong");
+    expect(balanceAdminNow).to.equal(balanceAdminBefore - qty, "The admin balance is wrong");
+    expect(balanceToNow).to.equal(balanceToBefore + qty, "The to balance is wrong");
   });
 
   it("Should NOT transfer from", async () => {
-    const qty = ethers.BigNumber.from(1).mul(ethers.BigNumber.from(10).pow(DECIMALS));
+    const qty = 1n * 10n ** DECIMALS;
     const { luizCoin, owner, otherAccount } = await loadFixture(deployFixture);
 
     await expect(luizCoin.transferFrom(owner.address, otherAccount.address, qty))
-      .to.be.revertedWith("ERC20: insufficient allowance");
+      .to.be.revertedWithCustomError(luizCoin, "ERC20InsufficientAllowance");
   });
 });
