@@ -9,12 +9,13 @@ describe("Contrato Proxy", function () {
 
     const Contrato = await ethers.getContractFactory("Contrato");
     const contract = await upgrades.deployProxy(Contrato);
+    const contractAddress = await contract.getAddress();
 
-    return { contract, owner, otherAccount };
+    return { contract, contractAddress, owner, otherAccount };
   }
 
   it("Should set message", async function () {
-    const { contract, owner, otherAccount } = await loadFixture(deployFixture);
+    const { contract } = await loadFixture(deployFixture);
 
     await contract.setMessage("Hello LuizTools")
 
@@ -22,12 +23,12 @@ describe("Contrato Proxy", function () {
   });
 
   it("Should upgrade and set message", async function () {
-    const { contract, owner, otherAccount } = await loadFixture(deployFixture);
+    const { contract, contractAddress } = await loadFixture(deployFixture);
 
     await contract.setMessage("Hello New LuizTools");
 
     const Contrato = await ethers.getContractFactory("Contrato");
-    const newContract = await upgrades.upgradeProxy(contract.address, Contrato);
+    const newContract = await upgrades.upgradeProxy(contractAddress, Contrato);
 
     expect(await newContract.getMessage()).to.equal("Hello New LuizTools");
   });

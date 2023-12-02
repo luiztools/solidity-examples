@@ -7,13 +7,14 @@ describe("MyTokens", () => {
     const [owner, otherAccount, oneMoreAccount] = await ethers.getSigners();
     const MyTokens = await ethers.getContractFactory("MyTokens");
     const contract = await MyTokens.deploy();
-    return { contract, owner, otherAccount, oneMoreAccount };
+    const contractAddress = await contract.getAddress();
+    return { contract, contractAddress, owner, otherAccount, oneMoreAccount };
   }
 
   it("Should mint a new token", async () => {
     const { contract, owner } = await loadFixture(deployFixture);
 
-    await contract.mint(0, { value: ethers.utils.parseEther("0.01") });
+    await contract.mint(0, { value: ethers.parseEther("0.01") });
 
     const balance = await contract.balanceOf(owner.address, 0);
     const supply = await contract.currentSupply(0);
@@ -25,32 +26,32 @@ describe("MyTokens", () => {
   it("Should NOT mint a new token (exists)", async () => {
     const { contract, owner } = await loadFixture(deployFixture);
 
-    await expect(contract.mint(3, { value: ethers.utils.parseEther("0.01") }))
+    await expect(contract.mint(3, { value: ethers.parseEther("0.01") }))
       .to.be.revertedWith("This token does not exists");
   });
 
   it("Should NOT mint a new token (payment)", async () => {
     const { contract, owner } = await loadFixture(deployFixture);
 
-    await expect(contract.mint(0, { value: ethers.utils.parseEther("0.001") }))
+    await expect(contract.mint(0, { value: ethers.parseEther("0.001") }))
       .to.be.revertedWith("Insufficient payment");
   });
 
   it("Should NOT mint a new token (supply)", async () => {
     const { contract, owner } = await loadFixture(deployFixture);
 
-    for(let i=0 ; i < 50; i++){
-      await contract.mint(0, { value: ethers.utils.parseEther("0.01") });
+    for (let i = 0; i < 50; i++) {
+      await contract.mint(0, { value: ethers.parseEther("0.01") });
     }
 
-    await expect(contract.mint(0, { value: ethers.utils.parseEther("0.01") }))
+    await expect(contract.mint(0, { value: ethers.parseEther("0.01") }))
       .to.be.revertedWith("Max supply reached");
   });
 
   it("Should burn", async () => {
     const { contract, owner } = await loadFixture(deployFixture);
 
-    await contract.mint(0, { value: ethers.utils.parseEther("0.01") });
+    await contract.mint(0, { value: ethers.parseEther("0.01") });
 
     await contract.burn(owner.address, 0, 1);
 
@@ -64,7 +65,7 @@ describe("MyTokens", () => {
   it("Should burn (approved)", async () => {
     const { contract, owner, otherAccount } = await loadFixture(deployFixture);
 
-    await contract.mint(0, { value: ethers.utils.parseEther("0.01") });
+    await contract.mint(0, { value: ethers.parseEther("0.01") });
 
     await contract.setApprovalForAll(otherAccount.address, true);
     const approved = await contract.isApprovedForAll(owner.address, otherAccount.address);
@@ -84,28 +85,28 @@ describe("MyTokens", () => {
     const { contract, owner, otherAccount } = await loadFixture(deployFixture);
 
     await expect(contract.burn(owner.address, 3, 1))
-      .to.be.revertedWith("ERC1155: burn amount exceeds balance");
+      .to.be.revertedWithCustomError(contract, "ERC1155InsufficientBalance");
   });
 
   it("Should NOT burn (permission)", async () => {
     const { contract, owner, otherAccount } = await loadFixture(deployFixture);
 
-    await contract.mint(0, { value: ethers.utils.parseEther("0.01") });
+    await contract.mint(0, { value: ethers.parseEther("0.01") });
 
     const instance = contract.connect(otherAccount);
 
     await expect(instance.burn(owner.address, 0, 1))
-      .to.be.revertedWith("ERC1155: caller is not token owner or approved");
+      .to.be.revertedWithCustomError(contract, "ERC1155MissingApprovalForAll");
   });
 
   it("Should transfer from", async () => {
     const { contract, owner, otherAccount } = await loadFixture(deployFixture);
 
-    await contract.mint(0, { value: ethers.utils.parseEther("0.01") });
+    await contract.mint(0, { value: ethers.parseEther("0.01") });
 
     await contract.safeTransferFrom(owner.address, otherAccount.address, 0, 1, "0x00000000");
 
-    const balances = await contract.balanceOfBatch([owner.address,otherAccount.address] , [0,0]);
+    const balances = await contract.balanceOfBatch([owner.address, otherAccount.address], [0, 0]);
     const supply = await contract.currentSupply(0);
 
     expect(balances[0]).to.equal(0, "The admin balance is wrong");
@@ -116,7 +117,7 @@ describe("MyTokens", () => {
   it("Should emit transfer event", async () => {
     const { contract, owner, otherAccount } = await loadFixture(deployFixture);
 
-    await contract.mint(0, { value: ethers.utils.parseEther("0.01") });
+    await contract.mint(0, { value: ethers.parseEther("0.01") });
 
     await expect(contract.safeTransferFrom(owner.address, otherAccount.address, 0, 1, "0x00000000"))
       .to.emit(contract, 'TransferSingle')
@@ -126,13 +127,13 @@ describe("MyTokens", () => {
   it("Should transfer batch from", async () => {
     const { contract, owner, otherAccount } = await loadFixture(deployFixture);
 
-    await contract.mint(0, { value: ethers.utils.parseEther("0.01") });
+    await contract.mint(0, { value: ethers.parseEther("0.01") });
 
-    await contract.mint(1, { value: ethers.utils.parseEther("0.01") });
+    await contract.mint(1, { value: ethers.parseEther("0.01") });
 
-    await contract.safeBatchTransferFrom(owner.address, otherAccount.address, [0,1], [1,1], "0x00000000");
+    await contract.safeBatchTransferFrom(owner.address, otherAccount.address, [0, 1], [1, 1], "0x00000000");
 
-    const balances = await contract.balanceOfBatch([owner.address,owner.address,otherAccount.address,otherAccount.address] , [0,1,0,1]);
+    const balances = await contract.balanceOfBatch([owner.address, owner.address, otherAccount.address, otherAccount.address], [0, 1, 0, 1]);
     const supplyZero = await contract.currentSupply(0);
     const supplyOne = await contract.currentSupply(1);
 
@@ -147,19 +148,19 @@ describe("MyTokens", () => {
   it("Should emit transfer batch event", async () => {
     const { contract, owner, otherAccount } = await loadFixture(deployFixture);
 
-    await contract.mint(0, { value: ethers.utils.parseEther("0.01") });
-    await contract.mint(1, { value: ethers.utils.parseEther("0.01") });
+    await contract.mint(0, { value: ethers.parseEther("0.01") });
+    await contract.mint(1, { value: ethers.parseEther("0.01") });
 
-    await expect(contract.safeBatchTransferFrom(owner.address, otherAccount.address, [0,1], [1,1], "0x00000000"))
+    await expect(contract.safeBatchTransferFrom(owner.address, otherAccount.address, [0, 1], [1, 1], "0x00000000"))
       .to.emit(contract, 'TransferBatch')
-      .withArgs(owner.address, owner.address, otherAccount.address, [0,1], [1,1]);
+      .withArgs(owner.address, owner.address, otherAccount.address, [0, 1], [1, 1]);
   });
 
 
   it("Should transfer from (approved)", async () => {
     const { contract, owner, otherAccount } = await loadFixture(deployFixture);
 
-    await contract.mint(0, { value: ethers.utils.parseEther("0.01") });
+    await contract.mint(0, { value: ethers.parseEther("0.01") });
 
     await contract.setApprovalForAll(otherAccount.address, true);
     const approved = await contract.isApprovedForAll(owner.address, otherAccount.address);
@@ -167,7 +168,7 @@ describe("MyTokens", () => {
     const instance = contract.connect(otherAccount);
     await instance.safeTransferFrom(owner.address, otherAccount.address, 0, 1, "0x00000000");
 
-    const balances = await contract.balanceOfBatch([owner.address, otherAccount.address], [0,0]);
+    const balances = await contract.balanceOfBatch([owner.address, otherAccount.address], [0, 0]);
 
     expect(balances[0]).to.equal(0, "Can't transfer (approved)");
     expect(balances[1]).to.equal(1, "Can't transfer (approved)");
@@ -186,58 +187,58 @@ describe("MyTokens", () => {
     const { contract, owner, otherAccount } = await loadFixture(deployFixture);
 
     await expect(contract.safeTransferFrom(owner.address, otherAccount.address, 0, 1, "0x00000000"))
-      .to.be.revertedWith("ERC1155: insufficient balance for transfer");
+      .to.be.revertedWithCustomError(contract, "ERC1155InsufficientBalance");
   });
 
   it("Should NOT transfer from (permission)", async () => {
     const { contract, owner, otherAccount } = await loadFixture(deployFixture);
 
-    await contract.mint(0, { value: ethers.utils.parseEther("0.01") });
+    await contract.mint(0, { value: ethers.parseEther("0.01") });
 
     const instance = contract.connect(otherAccount);
 
     await expect(instance.safeTransferFrom(owner.address, otherAccount.address, 0, 1, "0x00000000"))
-      .to.be.revertedWith("ERC1155: caller is not token owner or approved");
+      .to.be.revertedWithCustomError(contract, "ERC1155MissingApprovalForAll");
   });
 
   it("Should NOT transfer from (exists)", async () => {
     const { contract, owner, otherAccount } = await loadFixture(deployFixture);
 
     await expect(contract.safeTransferFrom(owner.address, otherAccount.address, 3, 1, "0x00000000"))
-      .to.be.revertedWith("ERC1155: insufficient balance for transfer");
+      .to.be.revertedWithCustomError(contract, "ERC1155InsufficientBalance");
   });
 
   it("Should NOT transfer from (approve)", async () => {
     const { contract, owner, otherAccount, oneMoreAccount } = await loadFixture(deployFixture);
 
-    await contract.mint(0, { value: ethers.utils.parseEther("0.01") });
+    await contract.mint(0, { value: ethers.parseEther("0.01") });
     await contract.setApprovalForAll(oneMoreAccount.address, true);
 
     const instance = contract.connect(otherAccount);
     await expect(instance.safeTransferFrom(owner.address, otherAccount.address, 0, 1, "0x00000000"))
-      .to.be.revertedWith("ERC1155: caller is not token owner or approved");
+      .to.be.revertedWithCustomError(contract, "ERC1155MissingApprovalForAll");
   });
 
   it("Should NOT transfer batch (arrays mismatch)", async () => {
     const { contract, owner, otherAccount } = await loadFixture(deployFixture);
 
-    await contract.mint(0, { value: ethers.utils.parseEther("0.01") });
-    await contract.mint(1, { value: ethers.utils.parseEther("0.01") });
+    await contract.mint(0, { value: ethers.parseEther("0.01") });
+    await contract.mint(1, { value: ethers.parseEther("0.01") });
 
-    await expect(contract.safeBatchTransferFrom(owner.address, otherAccount.address,[0,1], [1], "0x00000000"))
-      .to.be.revertedWith("ERC1155: ids and amounts length mismatch");
+    await expect(contract.safeBatchTransferFrom(owner.address, otherAccount.address, [0, 1], [1], "0x00000000"))
+      .to.be.revertedWithCustomError(contract, "ERC1155InvalidArrayLength");
   });
 
   it("Should NOT transfer batch (permission)", async () => {
     const { contract, owner, otherAccount } = await loadFixture(deployFixture);
 
-    await contract.mint(0, { value: ethers.utils.parseEther("0.01") });
-    await contract.mint(1, { value: ethers.utils.parseEther("0.01") });
+    await contract.mint(0, { value: ethers.parseEther("0.01") });
+    await contract.mint(1, { value: ethers.parseEther("0.01") });
 
     const instance = contract.connect(otherAccount);
 
-    await expect(instance.safeBatchTransferFrom(owner.address, otherAccount.address,[0,1], [1,1], "0x00000000"))
-      .to.be.revertedWith("ERC1155: caller is not token owner or approved");
+    await expect(instance.safeBatchTransferFrom(owner.address, otherAccount.address, [0, 1], [1, 1], "0x00000000"))
+      .to.be.revertedWithCustomError(contract, "ERC1155MissingApprovalForAll");
   });
 
   it("Should support interface", async () => {
@@ -248,20 +249,20 @@ describe("MyTokens", () => {
   });
 
   it("Should withdraw", async () => {
-    const { contract, owner, otherAccount } = await loadFixture(deployFixture);
+    const { contract, contractAddress, owner, otherAccount } = await loadFixture(deployFixture);
 
     const instance = contract.connect(otherAccount);
-    await instance.mint(0, { value: ethers.utils.parseEther("0.01") });
+    await instance.mint(0, { value: ethers.parseEther("0.01") });
 
-    const contractBalanceBefore = await contract.provider.getBalance(contract.address);
-    const ownerBalanceBefore = await contract.provider.getBalance(owner.address);
+    const contractBalanceBefore = await ethers.provider.getBalance(contractAddress);
+    const ownerBalanceBefore = await ethers.provider.getBalance(owner.address);
 
     await contract.withdraw();
-    
-    const contractBalanceAfter = await contract.provider.getBalance(contract.address);
-    const ownerBalanceAfter = await contract.provider.getBalance(owner.address);
 
-    expect(contractBalanceBefore).to.equal(ethers.utils.parseEther("0.01"), "Cannot withdraw");
+    const contractBalanceAfter = await ethers.provider.getBalance(contractAddress);
+    const ownerBalanceAfter = await ethers.provider.getBalance(owner.address);
+
+    expect(contractBalanceBefore).to.equal(ethers.parseEther("0.01"), "Cannot withdraw");
     expect(contractBalanceAfter).to.equal(0, "Cannot withdraw");
     expect(ownerBalanceAfter).to.greaterThan(ownerBalanceBefore, "Cannot withdraw");
   });
@@ -270,7 +271,7 @@ describe("MyTokens", () => {
     const { contract, owner, otherAccount } = await loadFixture(deployFixture);
 
     const instance = contract.connect(otherAccount);
-    await instance.mint(0, { value: ethers.utils.parseEther("0.01") });
+    await instance.mint(0, { value: ethers.parseEther("0.01") });
 
     await expect(instance.withdraw()).to.be.revertedWith("You do not have permission");
   });
@@ -278,7 +279,7 @@ describe("MyTokens", () => {
   it("Should has URI metadata", async () => {
     const { contract } = await loadFixture(deployFixture);
 
-    await contract.mint(0, { value: ethers.utils.parseEther("0.01") });
+    await contract.mint(0, { value: ethers.parseEther("0.01") });
 
     const uri = await contract.uri(0);
     expect(uri).to.equal("https://www.luiztools.com.br/tokens/0.json", "Wrong token URI");

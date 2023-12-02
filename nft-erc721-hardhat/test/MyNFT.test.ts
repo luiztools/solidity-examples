@@ -98,7 +98,7 @@ describe("MyNFT", () => {
     const { myNFT, owner, otherAccount } = await loadFixture(deployFixture);
 
     await expect(myNFT.burn(1))
-      .to.be.revertedWith("ERC721: invalid token ID");
+      .to.be.revertedWithCustomError(myNFT, "ERC721NonexistentToken");
   });
 
   it("Should NOT burn (permission)", async () => {
@@ -110,7 +110,7 @@ describe("MyNFT", () => {
     const token = await instance.tokenByIndex(0);
 
     await expect(instance.burn(token))
-      .to.be.revertedWith("ERC721: caller is not token owner or approved");
+      .to.be.revertedWithCustomError(myNFT, "ERC721InsufficientApproval");
   });
 
   it("Should has URI metadata", async () => {
@@ -128,7 +128,7 @@ describe("MyNFT", () => {
     const { myNFT, owner, otherAccount } = await loadFixture(deployFixture);
 
     await expect(myNFT.tokenURI(1))
-      .to.be.revertedWith("ERC721: invalid token ID");
+      .to.be.revertedWithCustomError(myNFT, "ERC721NonexistentToken");
   });
 
   it("Should transfer from", async () => {
@@ -208,7 +208,7 @@ describe("MyNFT", () => {
     const approved = await myNFT.getApproved(token);
 
     expect(ownerOf).to.equal(oneMoreAccount.address, "Can't transfer (approved)");
-    expect(approved).to.equal("0x0000000000000000000000000000000000000000", "Can't approve");
+    expect(approved).to.equal(ethers.ZeroAddress, "Can't approve");
   });
 
   it("Should transfer from (approve all)", async () => {
@@ -250,14 +250,14 @@ describe("MyNFT", () => {
     const token = await instance.tokenByIndex(0);
 
     await expect(instance.transferFrom(owner.address, otherAccount.address, token))
-      .to.be.revertedWith("ERC721: caller is not token owner or approved");
+      .to.be.revertedWithCustomError(myNFT, "ERC721InsufficientApproval");
   });
 
   it("Should NOT transfer from (exists)", async () => {
     const { myNFT, owner, otherAccount } = await loadFixture(deployFixture);
 
     await expect(myNFT.transferFrom(owner.address, otherAccount.address, 1))
-      .to.be.revertedWith("ERC721: invalid token ID");
+      .to.be.revertedWithCustomError(myNFT, "ERC721NonexistentToken");
   });
 
   it("Should NOT transfer from (approve)", async () => {
@@ -269,7 +269,7 @@ describe("MyNFT", () => {
 
     const instance = myNFT.connect(otherAccount);
     await expect(instance.transferFrom(owner.address, otherAccount.address, token))
-      .to.be.revertedWith("ERC721: caller is not token owner or approved");
+      .to.be.revertedWithCustomError(myNFT, "ERC721InsufficientApproval");
   });
 
   it("Should NOT transfer from (approve all)", async () => {
@@ -281,7 +281,7 @@ describe("MyNFT", () => {
 
     const instance = myNFT.connect(otherAccount);
     await expect(instance.transferFrom(owner.address, otherAccount.address, token))
-      .to.be.revertedWith("ERC721: caller is not token owner or approved");
+      .to.be.revertedWithCustomError(myNFT, "ERC721InsufficientApproval");
   });
 
   it("Should support interface", async () => {

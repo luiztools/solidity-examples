@@ -10,14 +10,14 @@
     "deploy": "npx hardhat run scripts/deploy.ts --network bsctest"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "LuizTools",
+  "license": "MIT",
   "devDependencies": {
-    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
-    "hardhat": "^2.18.1"
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "hardhat": "^2.19.1"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.8.1",
-    "dotenv": "^16.0.3"
+    "@openzeppelin/contracts": "^5.0.0",
+    "dotenv": "^16.3.1"
   }
 }

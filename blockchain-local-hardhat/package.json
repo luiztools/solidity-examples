@@ -10,6 +10,6 @@
   "author": "LuizTools",
   "license": "MIT",
   "devDependencies": {
-    "hardhat": "^2.18.3"
+    "hardhat": "^2.19.1"
   }
 }

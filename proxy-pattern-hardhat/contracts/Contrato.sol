@@ -16,7 +16,7 @@ contract Contrato is Initializable, OwnableUpgradeable {
     }
 
     function initialize() initializer public {
-        __Ownable_init();
+        __Ownable_init(msg.sender);
         message = "Hello world";
     }
 
