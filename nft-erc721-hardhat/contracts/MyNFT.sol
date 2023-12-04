@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract MyNFT is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable {
 
-    uint256 private _nextTokenId = 1;
+    uint256 private _nextTokenId;
 
     constructor() ERC721("MyNFT", "MYN") {}
 
@@ -18,7 +18,7 @@ contract MyNFT is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable {
     }
 
     function mint() public {
-        uint256 tokenId = _nextTokenId++;
+        uint256 tokenId = ++_nextTokenId;
 
         _safeMint(msg.sender, tokenId);
         _setTokenURI(tokenId, Strings.toString(tokenId));
