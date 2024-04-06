@@ -13,6 +13,13 @@ const config: HardhatUserConfig = {
       accounts: {
         mnemonic: process.env.SECRET
       }
+    },
+    bsctest: {
+      url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
+      chainId: 97,
+      accounts: {
+        mnemonic: process.env.SECRET
+      }
     }
   },
   etherscan: {

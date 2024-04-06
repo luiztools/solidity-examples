@@ -10,13 +10,21 @@ A CRUD example in Solidity with HardHat.
 1. open command line terminal
 2. cd crud-solidity-hardhat
 3. npm install
-4. npx hardhat test
+4. npm test
+
+## How to Deploy
+1. copy .env.example as .env
+2. fill .env variables
+3. review hardhat.config.ts
+4. npm run deploy or npm run ignition
 
 ## Mais Informações
 
 Leia o tutorial em: https://www.luiztools.com.br/post/como-criar-seu-primeiro-smart-contract-em-solidity-com-hardhat/
 
-Deploy em https://www.luiztools.com.br/post/deploy-de-smart-contract-com-hardhat-e-metamask
+Deploy com script em https://www.luiztools.com.br/post/deploy-de-smart-contract-com-hardhat-e-metamask
+
+Deploy com HardHat Ignition em https://www.luiztools.com.br/post/deploy-de-smart-contract-com-hardhat-ignition/
 
 Conheça meus livros: https://www.luiztools.com.br/meus-livros
 
