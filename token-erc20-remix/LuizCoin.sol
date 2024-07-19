@@ -1,6 +1,6 @@
 //SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.7;
+pragma solidity ^0.8.26;
 
 contract LuizCoin {
     uint256 private _totalSupply = 10000 * 10**18;
@@ -34,6 +34,10 @@ contract LuizCoin {
 
     function decimals() public view returns (uint8) {
         return _decimals;
+    }
+
+    function totalSupply() public view returns (uint) {
+        return _totalSupply;
     }
 
     function balanceOf(address owner) public view returns (uint256) {
