@@ -3,10 +3,10 @@
 pragma solidity ^0.8.26;
 
 contract LuizCoin {
-    uint256 private _totalSupply = 10000 * 10**18;
     string private _name = "LuizCoin";
     string private _symbol = "LUC";
     uint8 private _decimals = 18;
+    uint256 private _totalSupply = 10000 * 10 ** _decimals;
 
     mapping(address => uint256) private _balances;
 
@@ -45,11 +45,15 @@ contract LuizCoin {
     }
 
     function transfer(address to, uint256 value) public returns (bool) {
-        require(balanceOf(msg.sender) >= value, "Insuficient balance.");
+        require(balanceOf(msg.sender) >= value, "Insuficient balance");
         _balances[to] += value;
         _balances[msg.sender] -= value;
         emit Transfer(msg.sender, to, value);
         return true;
+    }
+
+    function allowance(address _owner, address _spender) public view returns (uint256){
+        return _allowances[_owner][_spender];
     }
 
     function approve(address spender, uint256 value) public returns (bool) {
@@ -63,10 +67,10 @@ contract LuizCoin {
         address to,
         uint256 value
     ) public returns (bool) {
-        require(balanceOf(from) >= value, "Insufficient balance.");
+        require(balanceOf(from) >= value, "Insufficient balance");
         require(
-            _allowances[from][msg.sender] >= value,
-            "Insufficient allowance."
+            allowance(from, msg.sender) >= value,
+            "Insufficient allowance"
         );
         _balances[to] += value;
         _balances[from] -= value;
