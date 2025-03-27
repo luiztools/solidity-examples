@@ -11,6 +11,10 @@ Tutorial at https://www.luiztools.com.br/post/como-subir-uma-blockchain-local-pr
 
 ## More
 
-Follow me on social networks: https://about.me/luiztools
+Conheça meu livro: https://www.luiztools.com.br/livro-web3
 
-Receive news on Telegram: https://t.me/luiznews
+Conheça meu curso de web3, blockchain e solidity: https://www.luiztools.com.br/curso-web23
+
+Me siga nas redes sociais: https://about.me/luiztools
+
+Receba novidades no Telegram: https://t.me/luiznews

@@ -26,10 +26,10 @@ A simple proxy pattern implementation for upgradeable contracts with HardHat and
 
 Tutorial completo em https://www.luiztools.com.br/post/como-atualizar-smart-contracts-em-solidity-proxy
 
+Conheça meu livro: https://www.luiztools.com.br/livro-web3
+
+Conheça meu curso de web3, blockchain e solidity: https://www.luiztools.com.br/curso-web23
+
 Me siga nas redes sociais: https://about.me/luiztools
 
 Receba novidades no Telegram: https://t.me/luiznews
-
-Conheça meu curso de Web3/Blockchain: https://www.luiztools.com.br/curso-web23
-
-Conheça meus livros: https://www.luiztools.com.br/meus-livros

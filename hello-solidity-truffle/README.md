@@ -20,8 +20,10 @@ Leia o tutorial em (inclui vídeo): https://www.luiztools.com.br/post/como-criar
 
 Deploy em (inclui vídeo) https://www.luiztools.com.br/post/deploy-de-smart-contract-com-truffle-e-metamask
 
+Conheça meu livro: https://www.luiztools.com.br/livro-web3
+
 Conheça meu curso de web3, blockchain e solidity: https://www.luiztools.com.br/curso-web23
 
-Conheça meus livros: https://www.luiztools.com.br/meus-livros
-
 Me siga nas redes sociais: https://about.me/luiztools
+
+Receba novidades no Telegram: https://t.me/luiznews
