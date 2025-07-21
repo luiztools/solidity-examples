@@ -11,7 +11,7 @@ contract BookDatabase {
         bytes2 country;
     }
 
-    uint32 private nextId = 0;
+    uint256 private nextId = 0;
     mapping(uint256 => Book) public books;
 
     function addBook(Book memory newBook) public {
@@ -34,13 +34,13 @@ contract BookDatabase {
         return c.length == d.length && keccak256(c) == keccak256(d);
     }
 
-    function editBook(uint32 id, Book memory newBook) public {
+    function editBook(uint256 id, Book memory newBook) public {
         Book memory oldBook = books[id];
 
-        if(bytes(newBook.title).length > 0 && !compare(oldBook.title, newBook.title))
+        if(!compare(newBook.title, "") && !compare(oldBook.title, newBook.title))
             oldBook.title = newBook.title;
 
-        if(bytes(newBook.author).length > 0 && !compare(oldBook.author, newBook.author))
+        if(!compare(newBook.author, "") && !compare(oldBook.author, newBook.author))
             oldBook.author = newBook.author;
 
         if(newBook.year > 0 && oldBook.year != newBook.year)
