@@ -1,14 +1,20 @@
-node_modules
-.env
+# Node modules
+/node_modules
 
-# Hardhat files
-/cache
+# Compilation output
+/dist
+
+# pnpm deploy output
+/bundle
+
+# Hardhat Build Artifacts
 /artifacts
 
-# TypeChain files
-/typechain
-/typechain-types
+# Hardhat compilation (v2) support directory
+/cache
 
-# solidity-coverage files
+# Typechain output
+/types
+
+# Hardhat coverage reports
 /coverage
-/coverage.json

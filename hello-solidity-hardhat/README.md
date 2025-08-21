@@ -1,5 +1,5 @@
 # hello-solidity-hardhat
-A Hello world example in Solidity using HardHat.
+A Hello world example in Solidity using HardHat 3.
 
 ## Pre-requisites
 
