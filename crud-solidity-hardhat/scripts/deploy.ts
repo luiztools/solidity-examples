@@ -1,15 +1,17 @@
-import { ethers } from "hardhat";
+import { network } from "hardhat";
+
+const { ethers } = await network.connect();
 
 async function main() {
-    const BookDatabase = await ethers.getContractFactory("BookDatabase");
-    const bookDatabase = await BookDatabase.deploy();
-    await bookDatabase.waitForDeployment();
-    console.log(`Contract deployed to ${bookDatabase.target}`);
+  const BookDatabase = await ethers.getContractFactory("BookDatabase");
+  const bookDatabase = await BookDatabase.deploy();
+  await bookDatabase.waitForDeployment();
+  console.log(`Contract deployed to ${bookDatabase.target}`);
 }
 
 // We recommend this pattern to be able to use async/await everywhere 
 // and properly handle errors. 
 main().catch((error) => {
-    console.error(error);
-    process.exitCode = 1;
+  console.error(error);
+  process.exitCode = 1;
 });

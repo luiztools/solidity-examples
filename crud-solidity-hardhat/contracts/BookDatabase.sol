@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.26;
+pragma solidity ^0.8.28;
 
 // Uncomment this line to use console.log
 // import "hardhat/console.sol";
@@ -35,7 +35,7 @@ contract BookDatabase {
     }
 
     function compareStrings(string memory a, string memory b)
-        private
+        public
         pure
         returns (bool)
     {

@@ -17,6 +17,6 @@ contract HelloWorldTest is Test {
   function test_HelloWorld() public view {
     bytes32 expected = keccak256(bytes("Hello World!"));
     bytes32 actual = keccak256(bytes(helloWorld.helloWorld()));
-    require(actual == expected, "Initial value should be 0");
+    require(actual == expected, "Should be Hello World!");
   }
 }

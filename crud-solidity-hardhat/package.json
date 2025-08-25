@@ -1,7 +1,6 @@
 {
   "name": "crud-solidity-hardhat",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "npx hardhat test",
@@ -11,11 +10,23 @@
   "keywords": [],
   "author": "LuizTools",
   "license": "MIT",
-  "devDependencies": {
-    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
-    "hardhat": "^2.22.2"
-  },
+  "description": "",
   "dependencies": {
-    "dotenv": "^16.4.5"
-  }
+    "dotenv": "^17.2.1"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ignition": "^3.0.0",
+    "@nomicfoundation/hardhat-toolbox-mocha-ethers": "^3.0.0",
+    "@types/chai": "^4.3.20",
+    "@types/chai-as-promised": "^8.0.2",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.18.0",
+    "chai": "^5.3.3",
+    "ethers": "^6.15.0",
+    "forge-std": "github:foundry-rs/forge-std#v1.9.4",
+    "hardhat": "^3.0.1",
+    "mocha": "^11.7.1",
+    "typescript": "~5.8.0"
+  },
+  "type": "module"
 }

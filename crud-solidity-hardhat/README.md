@@ -22,7 +22,7 @@ A CRUD example in Solidity with HardHat.
 
 Leia o tutorial em: https://www.luiztools.com.br/post/como-criar-seu-primeiro-smart-contract-em-solidity-com-hardhat/
 
-Deploy com script em https://www.luiztools.com.br/post/deploy-de-smart-contract-com-hardhat-e-metamask
+Deploy com HardHat Scripts em https://www.luiztools.com.br/post/deploy-de-smart-contract-com-hardhat-e-metamask
 
 Deploy com HardHat Ignition em https://www.luiztools.com.br/post/deploy-de-smart-contract-com-hardhat-ignition/
 
