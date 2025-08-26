@@ -4,8 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "npx hardhat test",
-    "deploy": "npx hardhat run scripts/deploy.ts --network bsctest",
-    "ignition": "npx hardhat ignition deploy ignition/modules/BookDatabase.ts --network sepolia"
+    "deploy": "npx hardhat run scripts/deploy.ts --network bnbtest",
+    "ignition": "npx hardhat ignition deploy ignition/modules/BookDatabase.ts --network bnbtest"
   },
   "keywords": [],
   "author": "LuizTools",

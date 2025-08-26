@@ -1,7 +1,7 @@
 import type { HardhatUserConfig } from "hardhat/config";
 
 import hardhatToolboxMochaEthersPlugin from "@nomicfoundation/hardhat-toolbox-mocha-ethers";
-import { configVariable } from "hardhat/config";
+import "dotenv/config";
 
 const config: HardhatUserConfig = {
   plugins: [hardhatToolboxMochaEthersPlugin],
@@ -30,18 +30,12 @@ const config: HardhatUserConfig = {
       type: "edr-simulated",
       chainType: "op",
     },
-    sepolia: {
-      type: "http",
-      chainType: "l1",
-      url: configVariable("SEPOLIA_RPC_URL"),
-      accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
-    },
-    bsctest: {
+    bnbtest: {
       type: "http",
       chainType: "l1",
       url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
       chainId: 97,
-      accounts: [`${process.env.SECRET}`]
+      accounts: [`${process.env.PRIVATE_KEY}`]
     }
   },
   verify: {
