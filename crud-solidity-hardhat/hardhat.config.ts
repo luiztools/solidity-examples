@@ -33,15 +33,15 @@ const config: HardhatUserConfig = {
     bnbtest: {
       type: "http",
       chainType: "l1",
-      url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
-      chainId: 97,
+      url: `${process.env.RPC_NODE}`,
+      chainId: parseInt(`${process.env.CHAIN_ID}`),
       accounts: [`${process.env.PRIVATE_KEY}`]
     }
   },
   verify: {
     etherscan: {
       apiKey: process.env.API_KEY
-    }
+    },
   }
 };
 
