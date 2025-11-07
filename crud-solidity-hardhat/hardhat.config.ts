@@ -42,7 +42,19 @@ const config: HardhatUserConfig = {
     etherscan: {
       apiKey: process.env.API_KEY
     },
-  }
+  },
+  chainDescriptors: {
+    80002: {
+      name: "amoy",
+      blockExplorers: {
+        etherscan: {
+          name: "amoy",
+          url: "https://amoy.polygonscan.com",
+          apiUrl: "https://api-amoy.polygonscan.com/",
+        },
+      },
+    },
+  },
 };
 
 export default config;
