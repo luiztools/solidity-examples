@@ -50,7 +50,7 @@ contract MultiSigWallet {
     event TransferReceived(address indexed from, uint amount);
     event TransferStart(uint indexed transferId, address indexed author, address indexed to, uint amount);
     event TransferApprove(uint indexed transferId, address indexed approvedBy, address indexed to, uint amount);
-    event TransferDenial(uint indexed transferId, address indexed deniedBy, address indexed to);
+    event TransferDenied(uint indexed transferId, address indexed deniedBy, address indexed to);
 
     function startTransfer(address payable to, uint amount) public onlyOwner {
         require(amount <= address(this).balance - lockedBalance, "Insufficient balance");
@@ -86,11 +86,12 @@ contract MultiSigWallet {
         transfers[transferId] = transfer;
         lockedBalance -= transfer.amount;
 
-        if (send)
+        if (send){
             emit TransferApprove(transferId, msg.sender, transfer.to, transfer.amount);
-        else emit TransferDenial(transferId, msg.sender, transfer.to);
-
-        payable(transfer.to).transfer(transfer.amount);
+            payable(transfer.to).transfer(transfer.amount);
+        }
+        else 
+            emit TransferDenied(transferId, msg.sender, transfer.to);
     }
     //end of transfer scope
 
