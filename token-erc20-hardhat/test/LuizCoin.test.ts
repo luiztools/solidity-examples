@@ -1,104 +1,107 @@
-import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
-import { ethers } from "hardhat";
+import { network } from "hardhat";
 
-describe("LuizCoin", () => {
+const { ethers, networkHelpers } = await network.connect();
+const [owner, otherAccount] = await ethers.getSigners();
 
-  const DECIMALS = 18n;
-
-  async function deployFixture() {
-    const [owner, otherAccount] = await ethers.getSigners();
-    const LuizCoin = await ethers.getContractFactory("LuizCoin");
-    const luizCoin = await LuizCoin.deploy();
-    return { luizCoin, owner, otherAccount };
-  }
-
-  it("Should put total supply LuizCoin in the admin account", async () => {
-    const { luizCoin, owner } = await loadFixture(deployFixture);
-    const balance = await luizCoin.balanceOf(owner.address);
-    const totalSupply = 1000n * 10n ** DECIMALS;
-    expect(balance).to.equal(totalSupply, "Total supply wasn't in the first account");
+describe("LuizCoin", function () {
+  it("Should have correct name", async function () {
+    const contract = await ethers.deployContract("LuizCoin");
+    const name = await contract.name();
+    expect(name).to.equal("LuizCoin");
   });
 
-  it("Should has the correct name", async () => {
-    const { luizCoin } = await loadFixture(deployFixture);
-    const name = await luizCoin.name() as string;
-    expect(name).to.equal("LuizCoin", "The name is wrong");
+  it("Should have correct symbol", async function () {
+    const contract = await ethers.deployContract("LuizCoin");
+    const symbol = await contract.symbol();
+    expect(symbol).to.equal("LUC");
   });
 
-  it("Should has the correct symbol", async () => {
-    const { luizCoin } = await loadFixture(deployFixture);
-    const symbol = await luizCoin.symbol() as string;
-    expect(symbol).to.equal("LUC", "The symbol is wrong");
+  it("Should have correct decimals", async function () {
+    const contract = await ethers.deployContract("LuizCoin");
+    const decimals = await contract.decimals();
+    expect(decimals).to.equal(18);
   });
 
-  it("Should has the correct decimals", async () => {
-    const { luizCoin } = await loadFixture(deployFixture);
-    const decimals = await luizCoin.decimals();
-    expect(decimals).to.equal(DECIMALS, "The decimals are wrong");
+  it("Should have correct totalSupply", async function () {
+    const contract = await ethers.deployContract("LuizCoin");
+    const totalSupply = await contract.totalSupply();
+    expect(totalSupply).to.equal(1000n * 10n ** 18n);
   });
 
-  it("Should transfer", async () => {
-    const qty = 1n * 10n ** DECIMALS;
-
-    const { luizCoin, owner, otherAccount } = await loadFixture(deployFixture);
-    const balanceAdminBefore = await luizCoin.balanceOf(owner.address);
-    const balanceToBefore = await luizCoin.balanceOf(otherAccount.address);
-
-    await luizCoin.transfer(otherAccount.address, qty);
-
-    const balanceAdminNow = await luizCoin.balanceOf(owner.address);
-    const balanceToNow = await luizCoin.balanceOf(otherAccount.address);
-
-    expect(balanceAdminNow).to.equal(balanceAdminBefore - qty, "The admin balance is wrong");
-    expect(balanceToNow).to.equal(balanceToBefore + qty, "The to balance is wrong");
+  it("Should get balance", async function () {
+    const contract = await ethers.deployContract("LuizCoin");
+    const balance = await contract.balanceOf(owner.address);
+    expect(balance).to.equal(1000n * 10n ** 18n);
   });
 
-  it("Should NOT transfer", async () => {
-    const aboveSupply = 1001n * 10n ** DECIMALS;
-    const { luizCoin, owner, otherAccount } = await loadFixture(deployFixture);
+  it("Should transfer", async function () {
+    const contract = await ethers.deployContract("LuizCoin");
+    const balanceOwnerBefore = await contract.balanceOf(owner.address);
+    const balanceOtherBefore = await contract.balanceOf(otherAccount.address);
 
-    await expect(luizCoin.transfer(otherAccount.address, aboveSupply))
-      .to.be.revertedWithCustomError(luizCoin, "ERC20InsufficientBalance");
+    await contract.transfer(otherAccount.address, 1n);
+
+    const balanceOwnerAfter = await contract.balanceOf(owner.address);
+    const balanceOtherAfter = await contract.balanceOf(otherAccount.address);
+
+    expect(balanceOwnerBefore).to.equal(1000n * 10n ** 18n);
+    expect(balanceOwnerAfter).to.equal((1000n * 10n ** 18n) - 1n);
+    expect(balanceOtherBefore).to.equal(0n);
+    expect(balanceOtherAfter).to.equal(1n);
   });
 
-  it("Should approve", async () => {
-    const qty = 1n * 10n ** DECIMALS;
+  it("Should NOT transfer", async function () {
+    const contract = await ethers.deployContract("LuizCoin");
 
-    const { luizCoin, owner, otherAccount } = await loadFixture(deployFixture);
-    await luizCoin.approve(otherAccount.address, qty);
-    const allowedAmount = await luizCoin.allowance(owner.address, otherAccount.address);
-
-    expect(qty).to.equal(allowedAmount, "The allowed amount is wrong"); ``
+    const instance = contract.connect(otherAccount);
+    await expect(instance.transfer(owner.address, 1n))
+      .to.be.revertedWithCustomError(contract, "ERC20InsufficientBalance");
   });
 
-  it("Should transfer from", async () => {
-    const qty = 1n * 10n ** DECIMALS;
-
-    const { luizCoin, owner, otherAccount } = await loadFixture(deployFixture);
-    const allowanceBefore = await luizCoin.allowance(owner.address, otherAccount.address);
-    const balanceAdminBefore = await luizCoin.balanceOf(owner.address);
-    const balanceToBefore = await luizCoin.balanceOf(otherAccount.address);
-
-    await luizCoin.approve(otherAccount.address, qty);
-
-    const instance = luizCoin.connect(otherAccount);
-    await instance.transferFrom(owner.address, otherAccount.address, qty);
-
-    const allowanceNow = await luizCoin.allowance(owner.address, otherAccount.address);
-    const balanceAdminNow = await luizCoin.balanceOf(owner.address);
-    const balanceToNow = await luizCoin.balanceOf(otherAccount.address);
-
-    expect(allowanceBefore).to.equal(allowanceNow, "The allowance is wrong");
-    expect(balanceAdminNow).to.equal(balanceAdminBefore - qty, "The admin balance is wrong");
-    expect(balanceToNow).to.equal(balanceToBefore + qty, "The to balance is wrong");
+  it("Should approve", async function () {
+    const contract = await ethers.deployContract("LuizCoin");
+    await contract.approve(otherAccount.address, 1n);
+    const value = await contract.allowance(owner.address, otherAccount.address);
+    expect(value).to.equal(1n);
   });
 
-  it("Should NOT transfer from", async () => {
-    const qty = 1n * 10n ** DECIMALS;
-    const { luizCoin, owner, otherAccount } = await loadFixture(deployFixture);
+  it("Should transfer from", async function () {
+    const contract = await ethers.deployContract("LuizCoin");
+    const balanceOwnerBefore = await contract.balanceOf(owner.address);
+    const balanceOtherBefore = await contract.balanceOf(otherAccount.address);
 
-    await expect(luizCoin.transferFrom(owner.address, otherAccount.address, qty))
-      .to.be.revertedWithCustomError(luizCoin, "ERC20InsufficientAllowance");
+    await contract.approve(otherAccount.address, 10n);
+
+    const instance = contract.connect(otherAccount);
+
+    await instance.transferFrom(owner.address, otherAccount.address, 5n);
+
+    const balanceOwnerAfter = await contract.balanceOf(owner.address);
+    const balanceOtherAfter = await contract.balanceOf(otherAccount.address);
+    const allowance = await contract.allowance(owner.address, otherAccount.address);
+
+    expect(balanceOwnerBefore).to.equal(1000n * 10n ** 18n);
+    expect(balanceOwnerAfter).to.equal((1000n * 10n ** 18n) - 5n);
+    expect(balanceOtherBefore).to.equal(0n);
+    expect(balanceOtherAfter).to.equal(5n);
+    expect(allowance).to.equal(5n);
+  });
+
+  it("Should NOT transfer from (balance)", async function () {
+    const contract = await ethers.deployContract("LuizCoin");
+
+    const instance = contract.connect(otherAccount);
+    await instance.approve(otherAccount.address, 1n);
+    await expect(instance.transferFrom(otherAccount.address, otherAccount.address, 1n))
+      .to.be.revertedWithCustomError(contract, "ERC20InsufficientBalance");
+  });
+
+  it("Should NOT transfer from (allowance)", async function () {
+    const contract = await ethers.deployContract("LuizCoin");
+
+    const instance = contract.connect(otherAccount);
+    await expect(instance.transferFrom(owner.address, otherAccount.address, 1n))
+      .to.be.revertedWithCustomError(contract, "ERC20InsufficientAllowance");
   });
 });
