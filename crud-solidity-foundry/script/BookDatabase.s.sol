@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import {Script} from "forge-std/Script.sol";
 import {BookDatabase} from "../src/BookDatabase.sol";
 
-contract CounterScript is Script {
+contract BookDatabaseScript is Script {
     BookDatabase public instance;
 
     function setUp() public {}

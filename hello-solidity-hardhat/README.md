@@ -10,7 +10,7 @@ Only Node.js.
 1. open command line terminal
 2. cd hello-solidity-hardhat
 3. npm install
-5. npx hardhat test
+4. npx hardhat test
 
 ## Mais Informações
 
