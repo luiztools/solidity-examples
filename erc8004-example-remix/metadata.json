@@ -1,0 +1,56 @@
+{
+  "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
+  "name": "myAgentName",
+  "description": "A natural language description of the Agent, which MAY include what it does, how it works, pricing, and interaction methods",
+  "image": "https://example.com/agentimage.png",
+  "services": [
+   {
+      "name": "web",
+      "endpoint": "https://web.agentxyz.com/"
+    },
+    {
+      "name": "A2A",
+      "endpoint": "https://agent.example/.well-known/agent-card.json",
+      "version": "0.3.0"
+    },
+    {
+      "name": "MCP",
+      "endpoint": "https://mcp.agent.eth/",
+      "version": "2025-06-18"
+    },
+    {
+      "name": "OASF",
+      "endpoint": "ipfs://{cid}",
+      "version": "0.8", 
+      "skills": [], 
+      "domains": [] 
+    },
+    {
+      "name": "ENS",
+      "endpoint": "vitalik.eth",
+      "version": "v1"
+    },
+    {
+      "name": "DID",
+      "endpoint": "did:method:foobar",
+      "version": "v1"
+    },
+    {
+      "name": "email",
+      "endpoint": "mail@myagent.com"
+    }
+  ],
+  "x402Support": false,
+  "active": true,
+  "registrations": [
+    {
+      "agentId": 22,
+      "agentRegistry": "eip155:{chainId}:{identityRegistry}"
+    }
+  ],
+  "supportedTrust": [
+    "reputation",
+    "crypto-economic",
+    "tee-attestation"
+  ]
+}
