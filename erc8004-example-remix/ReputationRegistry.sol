@@ -109,7 +109,7 @@ contract ERC8004ReputationRegistry {
         require(_identityRegistry.exists(agentId), "Unknown agent");
         require(feedbackIndex < _feedbacks[agentId].length, "Invalid index");
 
-        Feedback storage feedback = _feedbacks[agentId][feedbackIndex];
+        Feedback memory feedback = _feedbacks[agentId][feedbackIndex];
         require(feedback.from == msg.sender, "Not feedback author");
 
         // Update aggregate before removing feedback

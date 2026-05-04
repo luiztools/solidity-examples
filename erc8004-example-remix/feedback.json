@@ -1,0 +1,38 @@
+{
+  // MUST FIELDS
+  "agentRegistry": "eip155:1:{identityRegistry}",
+  "agentId": 22,
+  "clientAddress": "eip155:1:{clientAddress}",
+  "createdAt": "2025-09-23T12:00:00Z",
+  "value": 100,
+  "valueDecimals": 0,
+
+  // ALL OPTIONAL FIELDS
+  "tag1": "foo",
+  "tag2": "bar",
+  "endpoint": "https://agent.example.com/GetPrice",
+
+  "mcp": { "tool": "ToolName" }, // or: { "prompt": "PromptName" } / { "resource": "ResourceName" }
+
+  // A2A: see "Context Identifier Semantics" and Task model in the A2A specification.
+  "a2a": {
+    "skills": ["as-defined-by-A2A"], // e.g., AgentSkill identifiers
+    "contextId": "as-defined-by-A2A",
+    "taskId": "as-defined-by-A2A"
+  },
+
+  "oasf": {
+    "skills": ["as-defined-by-OASF"],
+    "domains": ["as-defined-by-OASF"]
+  },
+  
+  "proofOfPayment": { // this can be used for x402 proof of payment
+	  "fromAddress": "0x00...",
+	  "toAddress": "0x00...",
+	  "chainId": "1",
+	  "txHash": "0x00..."
+   },
+
+ // Other fields
+  " ... ": { " ... " } // MAY
+}
