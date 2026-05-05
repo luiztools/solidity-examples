@@ -6,13 +6,13 @@ interface IERC8004IdentityRegistry {
     function ownerOf(uint256 agentId) external view returns (address);
 }
 
-contract ERC8004ReputationRegistry {
+contract ReputationRegistry {
     event NewFeedback(
         uint256 indexed agentId,
         address indexed clientAddress,
         uint64 feedbackIndex,
         int128 value,
-        uint8 valueDecimals,
+        uint8 valueDecimals
     );
 
     event FeedbackRevoked(uint256 indexed agentId, address indexed clientAddress, uint64 indexed feedbackIndex);
@@ -44,7 +44,7 @@ contract ERC8004ReputationRegistry {
     uint8 constant DECIMALS = 2;
     IERC8004IdentityRegistry private _identityRegistry;
     mapping(uint256 => Feedback[]) private _feedbacks;
-    mapping(uint256 => Response[]) private _responses;
+    mapping(uint256 => mapping(uint256 => Response[])) public responses;
     mapping(uint256 => Aggregate) public aggregate;
     mapping(uint256 => mapping(address => bool)) private _feedbackAuthorizations;
 
@@ -70,7 +70,7 @@ contract ERC8004ReputationRegistry {
     function giveFeedback(
         uint256 agentId,
         int128 value,
-        uint8 valueDecimals,
+        uint8 valueDecimals
     ) external {
         require(address(_identityRegistry) != address(0), "Not initialized");
         require(_identityRegistry.exists(agentId), "Unknown agent");
@@ -93,7 +93,7 @@ contract ERC8004ReputationRegistry {
         Aggregate storage agg = aggregate[agentId];
         agg.sum += value;
         agg.count += 1;
-        agg.avg = agg.sum / int256(agg.count);
+        agg.avg = agg.sum / agg.count;
 
         emit NewFeedback(
             agentId,
@@ -116,7 +116,7 @@ contract ERC8004ReputationRegistry {
         Aggregate storage agg = aggregate[agentId];
         agg.sum -= feedback.value;
         agg.count -= 1;
-        agg.avg = agg.count > 0 ? agg.sum / int256(agg.count) : 0;
+        agg.avg = agg.count > 0 ? agg.sum / agg.count : int256(0);
 
         _feedbacks[agentId][feedbackIndex].revoked = true; // Mark as revoked instead of removing to maintain indices
 
@@ -128,11 +128,11 @@ contract ERC8004ReputationRegistry {
         require(_identityRegistry.exists(agentId), "Unknown agent");
         require(feedbackIndex < _feedbacks[agentId].length, "Invalid index");
 
-        bool isAgentOwner = clientAddress == msg.sender && IER8004IdentityRegistry(_identityRegistry).ownerOf(agentId) == msg.sender;
+        bool isAgentOwner = clientAddress == msg.sender && _identityRegistry.ownerOf(agentId) == msg.sender;
         bool isClient = clientAddress == msg.sender && clientAddress == _feedbacks[agentId][feedbackIndex].from;
         require(isAgentOwner || isClient, "Only agent owner or feedback author can respond");
 
-        _responses[agentId].push(
+        responses[agentId][feedbackIndex].push(
             Response({
                 responder: msg.sender,
                 responseURI: responseURI,
@@ -141,8 +141,6 @@ contract ERC8004ReputationRegistry {
             })
         );
 
-        // In a real implementation, you would store the responseURI and responseHash
-        // For this example, we just emit an event
         emit ResponseAppended(
             agentId,
             clientAddress,
@@ -153,17 +151,23 @@ contract ERC8004ReputationRegistry {
         );
     }
 
+    function contains(address[] memory addrSet, address addr) private pure returns (bool){
+        for(uint256 i=0; i < addrSet.length; i++){
+            if(addr == addrSet[i]) return true;
+        }
+        return false;
+    }
+
     function getSummary(uint256 agentId, address[] calldata clientAddresses, string tag1, string tag2) external view returns (uint64 count, int128 summaryValue, uint8 summaryValueDecimals){
         require(clientAddresses.length > 0, "clientAddresses is required");
         require(address(_identityRegistry) != address(0), "Not initialized");
         require(_identityRegistry.exists(agentId), "Unknown agent");
 
-        // For simplicity, this example does not implement tag-based filtering. In a real implementation, you would need to store tags in the Feedback struct and filter accordingly.
         count = 0;
         summaryValue = 0;
         summaryValueDecimals = DECIMALS;
 
-        for (uint64 i = 0; i < _feedbacks[agentId].length; i++) {
+        for (uint256 i = 0; i < _feedbacks[agentId].length; i++) {
             Feedback memory feedback = _feedbacks[agentId][i];
             if (!feedback.revoked && contains(clientAddresses, feedback.from)) {
                 summaryValue += feedback.value;
@@ -171,7 +175,7 @@ contract ERC8004ReputationRegistry {
             }
         }
 
-        summaryValue = count > 0 ? summaryValue / int128(count) : 0; // Return average value
+        summaryValue = count > 0 ? summaryValue / count : int128(0);   
     }
 
     function readFeedback(uint256 agentId, address clientAddress, uint64 feedbackIndex) external view returns (int128 value, uint8 valueDecimals, string tag1, string tag2, bool isRevoked) {
@@ -247,11 +251,28 @@ contract ERC8004ReputationRegistry {
         bool clientFilter = clientAddress != address(0);
         bool responderFilter = responders.length > 0;
 
-        for (uint64 i = 0; i < _responses[agentId].length; i++) {
-            Response memory response = _responses[agentId][i];
-            if ((!clientFilter || _feedbacks[agentId][feedbackIndex].from == clientAddress) 
-                && (!responderFilter || containsAddress(responders, response.responder))) {
-                count++;
+        if(clientFilter){
+            uint64 aux = 0;
+            for (uint64 i = 0; i < _feedbacks[agentId].length; i++) {
+                if (_feedbacks[agentId][i].from == clientAddress) {
+                    if(aux == feedbackIndex) {
+                        for (uint64 j = 0; j < responses[agentId][i].length; j++) {
+                            Response memory response = responses[agentId][i][j];
+                            if (!responderFilter || contains(responders, response.responder)) {
+                                count++;
+                            }
+                        }
+                    }
+                    else aux++;
+                }
+            }
+        }
+        else {
+            for (uint64 i = 0; i < responses[agentId][feedbackIndex].length; i++) {
+                Response memory response = responses[agentId][feedbackIndex][i];
+                if (!responderFilter || contains(responders, response.responder)) {
+                    count++;
+                }
             }
         }
     }
@@ -260,30 +281,20 @@ contract ERC8004ReputationRegistry {
         require(address(_identityRegistry) != address(0), "Not initialized");
         require(_identityRegistry.exists(agentId), "Unknown agent");
 
-        uint64 count = 0;
-        for (uint64 i = 0; i < _feedbacks[agentId].length; i++) {
-            if (!_feedbacks[agentId][i].revoked) {
-                count++;
-            }
-        }
-
+        uint256 count = _feedbacks[agentId].length;
         address[] memory clients = new address[](count);
-        uint64 index = 0;
-        for (uint64 i = 0; i < _feedbacks[agentId].length; i++) {
-            if (!_feedbacks[agentId][i].revoked) {
-                clients[index] = _feedbacks[agentId][i].from;
-                index++;
-            }
+        for(uint256 i=0; i < count; i++){
+            clients[i] = _feedbacks[agentId][i].from;
         }
         return clients;
     }
 
-    function getLastIndex(uint256 agentId, address clientAddress) external view returns (uint64){
+    function getLastIndex(uint256 agentId, address clientAddress) external view returns (uint256){
         require(address(_identityRegistry) != address(0), "Not initialized");
         require(_identityRegistry.exists(agentId), "Unknown agent");
         require(clientAddress != address(0), "Invalid client address");
 
-        for (uint64 i = uint64(_feedbacks[agentId].length) - 1; i >= 0; i--) {
+        for (uint256 i = _feedbacks[agentId].length - 1; i >= 0; i--) {
             if (_feedbacks[agentId][i].from == clientAddress && !_feedbacks[agentId][i].revoked) {
                 return i;
             }

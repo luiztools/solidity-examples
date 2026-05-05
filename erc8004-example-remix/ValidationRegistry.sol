@@ -7,7 +7,7 @@ interface IERC8004IdentityRegistry {
     function ownerOf(uint256 agentId) external view returns (address);
 }
 
-contract ERC8004ValidationRegistry {
+contract ValidationRegistry {
     struct ValidationRequest {
         uint256 agentId;
         address validatorAddress;
@@ -83,7 +83,7 @@ contract ERC8004ValidationRegistry {
             "Invalid validator"
         );
         require(
-            requestURI.length == 0 || requestHash != bytes32(0),
+            requestURI.length == 0 && requestHash != bytes32(0),
             "Hash required with URI"
         );
 
@@ -92,7 +92,7 @@ contract ERC8004ValidationRegistry {
             validatorAddress: validatorAddress,
             requestURI: requestURI,
             requestHash: requestHash,
-            timestamp: block.timestamp,
+            timestamp: block.timestamp
         });
 
         agentValidationRequests[agentId].push(requestHash);
@@ -119,8 +119,8 @@ contract ERC8004ValidationRegistry {
         require(request.validatorAddress == msg.sender, "Not validator");
         require(response >= 0 && response <= 100, "Invalid response");
 
-        if (bytes(responseURI).length == 0) {
-            require(responseHash == bytes32(0), "Hash without URI");
+        if (bytes(responseURI).length >= 0) {
+            require(responseHash != bytes32(0), "Hash required with URI");
         }
 
         validationResponses[requestHash] = ValidationResponse({
@@ -153,22 +153,23 @@ contract ERC8004ValidationRegistry {
             uint256 agentId,
             uint8 response,
             bytes32 responseHash,
-            string tag,
+            string memory tag,
             uint256 lastUpdate
         )
     {
+        require(address(_identityRegistry) != address(0), "Not initialized");
         ValidationRequest memory request = validationRequests[requestHash];
-        require(request.agentId != 0, "Unknown request");
+        require(request.agentId != 0, "Unknow request");
 
-        ValidationResponse memory response = validationResponses[requestHash];
+        ValidationResponse memory vResponse = validationResponses[requestHash];
 
         return (
             request.validatorAddress,
             request.agentId,
-            response.response,
-            response.responseHash,
-            response.tag,
-            response.lastUpdate
+            vResponse.response,
+            vResponse.responseHash,
+            vResponse.tag,
+            vResponse.lastUpdate
         );
     }
 
@@ -188,13 +189,17 @@ contract ERC8004ValidationRegistry {
         count = 0;
 
         for (uint256 i = 0; i < requests.length; i++) {
-            ValidationResponse memory response = validationResponses[requests[i]];
+            ValidationResponse memory response = validationResponses[
+                requests[i]
+            ];
             ValidationRequest memory request = validationRequests[requests[i]];
 
             if (
                 response.lastUpdate != 0 &&
-                (!validatorFilter || contains(validatorAddresses, request.validatorAddress)) &&
-                (!tagFilter || keccak256(bytes(response.tag)) == keccak256(bytes(tag)))
+                (!validatorFilter ||
+                    contains(validatorAddresses, request.validatorAddress)) &&
+                (!tagFilter ||
+                    keccak256(bytes(response.tag)) == keccak256(bytes(tag)))
             ) {
                 totalResponse += response.response;
                 count++;
@@ -204,13 +209,17 @@ contract ERC8004ValidationRegistry {
         averageResponse = count > 0 ? uint8(totalResponse / count) : 0;
     }
 
-    function getAgentValidations(uint256 agentId) external view returns (bytes32[] memory requestHashes){
+    function getAgentValidations(
+        uint256 agentId
+    ) external view returns (bytes32[] memory requestHashes) {
         require(address(_identityRegistry) != address(0), "Not initialized");
         require(_identityRegistry.exists(agentId), "Unknown agent");
         return agentValidationRequests[agentId];
     }
 
-    function getValidatorRequests(address validatorAddress) external view returns (bytes32[] memory requestHashes){
+    function getValidatorRequests(
+        address validatorAddress
+    ) external view returns (bytes32[] memory requestHashes) {
         require(address(_identityRegistry) != address(0), "Not initialized");
         require(validatorAddress != address(0), "Invalid address");
         return validatorValidationRequests[validatorAddress];
